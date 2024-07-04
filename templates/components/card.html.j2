@@ -1,0 +1,61 @@
+{# This is the base card macro - all card styles go here #}
+
+{% macro card(id, title, icon=None, content=None, large=False, height=500) %}
+<div class="card-container {{ 'col-12' if large else 'col-xl-6 col-md-12' }}">
+    <div id="card-{{ id }}" class="card m-2 shadow" style="height: {{ height }}px;">
+        <div class="card-header">
+            <i class="{{ icon }}"></i>
+            {{ title }}
+        </div>
+        <div class="card-body p1" style="overflow: hidden;">
+            {{ content }}
+        </div>
+        <div class="spinner d-flex justify-content-center align-items-center" style="height: 100%;">
+            <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
+        <div class="error message text-warning d-flex justify-content-center align-items-center d-none">
+        </div>
+        <div class="info message text-black-50 fst-italic d-flex justify-content-end align-items-right p-1 d-none" style="font-size: smaller;">
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{# Plot Card Macro #}
+
+{% macro draw_plot(plot_name, large=False) %}
+<div id="plot-{{ plot_name }}" class="plot-container">
+    <div class="plot" id="plot-{{ plot_name }}"></div>
+</div>
+<script>
+    fetchAndPlot('{{ plot_name }}');
+</script>
+{% endmacro %}
+
+{% macro plot_card(plot_name, title, icon=None, large=False, height=550)%}
+{{ card(plot_name, title, icon, draw_plot(plot_name, large), large, height)}}
+{% endmacro %}
+
+{# Table Card Macro #}
+
+{% macro draw_table(dataframe_name, large=False) %}
+<div class="row">
+    <div class="col">
+        <div class="output">
+            <div class="output-area">
+                <div id="df-{{dataframe_name}}" class="output_html render_html output_subarea table-container">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    fetchDataFrame('{{ dataframe_name }}');
+</script>
+{% endmacro %}
+
+{% macro table_card(title, dataframe_name, large=False, height=550) %}
+{{ card("table", title, "fa-solid fa-table", draw_table(dataframe_name, large), large, height) }}
+{% endmacro %}

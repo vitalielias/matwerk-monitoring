@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+{% include "partials/head.html.j2" %}
+
+<body class="sb-nav-fixed">
+    <!-- Navigation Top -->
+    {% include "partials/top_nav.html.j2" %}
+
+    <!-- Navigation Side -->
+    <div id="layoutSidenav">
+        {% include "partials/side_nav.html.j2" %}
+        <div id="layoutSidenav_content">
+
+            <!-- Main Content -->
+            <main>
+                {% block content %}
+                {{content}}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+    {% include "partials/footer.html.j2" %}
+
+    {% include "partials/scripts.html.j2" %}
+</body>
+
+</html>

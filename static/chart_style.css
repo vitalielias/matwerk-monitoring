@@ -1,0 +1,41 @@
+.dataframe {
+    font-size: smaller;
+}
+
+.dataframe th {
+    background: #e8f1fa;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dataframe th:first-child {
+    padding-left: 3em;
+    text-align: left;
+}
+
+.dataframe tr:nth-child(even) {
+    background: #E8E8E8;
+}
+
+.dataframe tr:hover {
+    background: #afc7e0;
+    cursor: pointer;
+}
+
+.dataframe td {
+    text-align: center;
+}
+
+.dataframe td:first-child {
+    padding-left: 3em;
+    text-align: left;
+}
+
+.dataframe.sum tr:last-child {
+    background: #e8f1fa;
+    font-weight: bold;
+}
+
+.dataframe.sum td:last-child {
+    font-style: italic;
+}
