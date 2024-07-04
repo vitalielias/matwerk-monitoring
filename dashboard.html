@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Frontend Collection Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="js/semantic-ui/transition.min.js"></script>
+    <script src="js/semantic-ui/dimmer.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@kit-data-manager/metadata-editor@0.9.3/deps/opt/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="./css/semantic.min.css">
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .main {
+            min-height: 90%;
+            padding-bottom: 10%;
+        }
+
+        .footer {
+            height: 10%;
+        }
+
+        #app-logo {
+            width: 120px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body class="ui">
+    <div class="main">
+        <h1 class="ui block header">
+            <img id="app-logo" src="./images/NFFA_EU_Pilot.png" class="ui circular image">
+            <div id="app-title" class="content">
+                NEP Services Dashboard
+                <div id="app-subtitle" class="sub header">A collection of web frontends for tools developed within KIT
+                    SCC.</div>
+            </div>
+        </h1>
+
+        <div class="ui padded container">
+            <div class="ui large segment">
+                <p>This collection of generic web frontends provides access to RESTful services of the KIT Data Manager
+                    service portfolio.
+                    The idea is to have graphical user interfaces available such that certain base services can be
+                    directly
+                    used for performing
+                    basic tasks without the need of integrating them in your own frontends before being able to use them
+                    the
+                    first time.
+                </p>
+
+                <p>
+                    However, for some application cases, these generic web frontends might even be sufficient for direct
+                    interaction with our
+                    services, and they might be offered to the end-user. To allow that, all frontends of this collection
+                    offer a certain degree
+                    of customization to slightly adapt their presentation to specific needs.
+                </p>
+            </div>
+
+            <div class="ui special centered cards">
+                <div class="card">
+                    <div class="blurring dimmable image">
+                        <div class="ui dimmer">
+                            <div class="content">
+                                <div class="center">
+                                    <div id="metastore-ui" class="ui inverted button">Open</div>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="./images/metadata.jpg">
+                    </div>
+                    <div class="content">
+                        <a class="header">MetaRepo</a>
+                        <div class="meta">
+                            <span>Manage and access your metadata schemas and documents.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="blurring dimmable image">
+                        <div class="ui inverted dimmer">
+                            <div class="content">
+                                <div class="center">
+                                    <div id="mapping-service-ui" class="ui primary button">Open</div>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="./images/mapping_service.jpg">
+                    </div>
+                    <div class="content">
+                        <a class="header">Mapping Service</a>
+                        <div class="meta">
+                            <span>Extract metadata and map it to a JSON schema.                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="blurring dimmable image">
+                        <div class="ui dimmer">
+                            <div class="content">
+                                <div class="center">
+                                    <div id="mri-prediction-ui" class="ui inverted button">Open</div>
+                                    <!-- <form action="http://141.52.215.75:8000" method="GET" enctype="multipart/form-data"></form> -->
+                                </div>
+                            </div>
+                        </div>
+                        <img src="./images/mri.png">
+                    </div>
+                    <div class="content">
+                        <a class="header">MRI Prediction Service</a>
+                        <div class="meta">
+                            <span>Magnetic Resonance Image reconstruction and contrast prediction.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="blurring dimmable image">
+                        <div class="ui dimmer">
+                            <div class="content">
+                                <div class="center">
+                                    <div id="nmr-graph-ui" class="ui inverted button">Open</div>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="./images/nmr.png">
+                    </div>
+                    <div class="content">
+                        <a class="header">NMR Spectra Graph</a>
+                        <div class="meta">
+                            <span>Nuclear Magnetic Resonance data curation.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui inverted attached footer segment">
+        <div class="ui container">
+            <div class="ui secondary inverted menu">
+                <div class="item">
+                    <a href="https://github.com/kit-data-manager/frontend-collection"><em
+                            class="fa-brands fa-github"></em></a>
+                </div>
+                <div class="right item">
+                    <a href="https://www.kit.edu/legals.php">Legals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.special.cards .image').dimmer({
+            on: 'hover'
+        });
+        $('#metastore-ui').click(() => {
+            window.open("schema-management.html", "_self");
+        });
+        $('#mapping-service-ui').click(() => {
+            window.open("mapping-service-ui.html", "_self");
+        });
+        // $('#mri-prediction-ui').click(() => {
+        //     window.open("../production_service/templates/prediction.html", "_self");
+        // });
+        //$('#mri-prediction-ui').click(() => {
+        //    window.open("http://141.52.215.75:8000/prediction");
+        //});
+         $('#mri-prediction-ui').click(() => {
+             window.open("https://metarepo.nffa.eu/prediction");
+         });
+        $('#nmr-graph-ui').click(() => {
+            window.open("https://metarepo.nffa.eu/start_query", "_self");
+        });
+    </script>
+</body>
+
+</html>

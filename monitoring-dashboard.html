@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Monitoring Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="js/semantic-ui/transition.min.js"></script>
+    <script src="js/semantic-ui/dimmer.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@kit-data-manager/metadata-editor@0.9.3/deps/opt/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="./css/semantic.min.css">
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .main {
+            min-height: 90%;
+            padding-bottom: 10%;
+        }
+
+        .footer {
+            height: 10%;
+        }
+
+        #app-logo {
+            width: 120px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body class="ui">
+    <div class="main">
+        <h1 class="ui block header">
+            <img id="app-logo" src="./images/NFFA_EU_Pilot.png" class="ui circular image">
+            <div id="app-title" class="content">
+                Monitoring Dashboard
+                <div id="app-subtitle" class="sub header">Monitoring and analysis tools.</div>
+            </div>
+        </h1>
+
+        <div class="ui padded container">
+            <!-- Main content goes here -->
+        </div>
+    </div>
+    <div class="ui inverted attached footer segment">
+        <div class="ui container">
+            <div class="ui secondary inverted menu">
+                <div class="item">
+                    <a href="https://github.com/kit-data-manager/frontend-collection"><em
+                            class="fa-brands fa-github"></em></a>
+                </div>
+                <div class="right item">
+                    <a href="https://www.kit.edu/legals.php">Legals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.special.cards .image').dimmer({
+            on: 'hover'
+        });
+        // Add any additional scripts needed for the monitoring dashboard here
+    </script>
+</body>
+
+</html>
