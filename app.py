@@ -6,6 +6,23 @@ from flask import Flask, render_template
 import pandas as pd
 
 app = Flask(__name__)
+logging.basicConfig(level = logging.INFO)
+# Define the data for multiple tables
+dataframes = {
+    "sample_table": pd.DataFrame({
+        "Name": ["Alice", "Bob", "Charlie"],
+        "Age": [25, 30, 35],
+        "Occupation": ["Engineer", "Doctor", "Lawyer"]
+    }),
+    "metrics_table": pd.DataFrame({
+        'Metric': [
+            'Unique Users', 'Location of Users', 'Processed Gigabytes of Images', 'Number of Extractions/ Mappings',
+            'Processing Time per Image', 'User Engagement', 'Schema/Plugin Usage', 'Repeat Usage',
+            'API Response Times', 'Documentation Access', 'User Growth Rate', 'Number of Plugins'
+        ],
+        'Value': [100, 50, 200, 75, 0.5, 120, 30, 40, 0.1, 15, 10, 8]  # Dummy data
+    })
+}
 
 
 def get_version():
@@ -61,19 +78,32 @@ def table(table_name: str):
     """
     logging.info(f"Loading table {table_name}")
 
-    # Load a demo table
-    if table_name == "sample_table":
-        df = pd.DataFrame(
-            {
-                "Name": ["Alice", "Bob", "Charlie"],
-                "Age": [25, 30, 35],
-                "Occupation": ["Engineer", "Doctor", "Lawyer"],
-            }
-        )
-
-        return {"html": df.to_html(index=False, classes="table table-condensed")}
+    # Load the table
+    df = dataframes.get(table_name)
+    if df is not None:
+        table_html = df.to_html(index=False, classes="table table-condensed")
+        return {"html": table_html}
 
     return {"error": f"Table {table_name} not found"}, 404
+# def table(table_name: str):
+#     """
+#     Loads a table and returns it as html.
+#     """
+#     logging.info(f"Loading table {table_name}")
+
+#     # Load a demo table
+#     if table_name == "sample_table":
+#         df = pd.DataFrame(
+#             {
+#                 "Name": ["Alice", "Bob", "Charlie"],
+#                 "Age": [25, 30, 35],
+#                 "Occupation": ["Engineer", "Doctor", "Lawyer"],
+#             }
+#         )
+
+#         return {"html": df.to_html(index=False, classes="table table-condensed")}
+
+#     return {"error": f"Table {table_name} not found"}, 404
 
 
 if __name__ == "__main__":
