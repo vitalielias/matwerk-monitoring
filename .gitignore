@@ -1,0 +1,46 @@
+# Ignore all system files
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.swp
+*.swo
+*.swn
+*.DS_Store
+*.Thumbs.db
+
+# Ignore all system directories
+/tmp
+/log
+/cache
+/vendor
+node_modules
+*.lock
+
+# Ignore specific operating system directories
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*.out
+*.lo
+*.o
+*.so
+*.swp
+
+# Ignore specific directories
+/lib64
+/system
+/usr
+/sbin
+/var
+/proc
+/sys
