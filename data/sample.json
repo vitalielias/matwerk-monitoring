@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "type": "scatter",
+            "x": [1, 2, 3, 4],
+            "y": [10, 15, 12, 13],
+            "mode": "lines+markers",
+            "name": "Sample Plot"
+        }
+    ],
+    "layout": {
+        "title": "Sample Plot",
+        "xaxis": {"title": "X Axis"},
+        "yaxis": {"title": "Y Axis"}
+    }
+}
