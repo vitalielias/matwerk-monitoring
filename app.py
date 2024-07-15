@@ -9,24 +9,24 @@ import pandas as pd
 app = Flask(__name__)
 logging.basicConfig(level = logging.INFO)
 # Define the data for multiple tables
-dataframes = {
-    "sample_table": pd.DataFrame({
-        "Name": ["Alice", "Bob", "Charlie"],
-        "Age": [25, 30, 35],
-        "Occupation": ["Engineer", "Doctor", "Lawyer"]
-    }),
-    "metrics_table": pd.DataFrame({
-        'Metric': [
-            'Unique Users', 'Location of Users', 'Processed Gigabytes of Images', 'Number of Extractions/ Mappings',
-            'Processing Time per Image', 'User Engagement', 'Schema/Plugin Usage', 'Repeat Usage',
-            'API Response Times', 'Documentation Access', 'User Growth Rate', 'Number of Plugins'
-        ],
-        'Value': [100, 50, 200, 75, 0.5, 120, 30, 40, 0.1, 15, 10, 8]  # Dummy data
-    })
-}
+# dataframes = {
+#     "sample_table": pd.DataFrame({
+#         "Name": ["Alice", "Bob", "Charlie"],
+#         "Age": [25, 30, 35],
+#         "Occupation": ["Engineer", "Doctor", "Lawyer"]
+#     }),
+#     "metrics_table": pd.DataFrame({
+#         'Metric': [
+#             'Unique Users', 'Location of Users', 'Processed Gigabytes of Images', 'Number of Extractions/ Mappings',
+#             'Processing Time per Image', 'User Engagement', 'Schema/Plugin Usage', 'Repeat Usage',
+#             'API Response Times', 'Documentation Access', 'User Growth Rate', 'Number of Plugins'
+#         ],
+#         'Value': [100, 50, 200, 75, 0.5, 120, 30, 40, 0.1, 15, 10, 8]  # Dummy data
+#     })
+# }
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Load DataFrames from JSON files
 dataframes = {}
@@ -34,8 +34,10 @@ for filename in os.listdir('data'):
     if filename.endswith('.json'):
         name = filename.split('.')[0]
         with open(f'data/{filename}', 'r') as f:
-            df = pd.read_json(f, orient='split')
-            dataframes[name] = df
+            data = json.load(f)
+            if name in data:  # Ensure the key exists in the JSON data
+                df = pd.DataFrame(data[name])
+                dataframes[name] = df
 
 def get_version():
     with open("pyproject.toml", "rb") as f:
@@ -47,14 +49,11 @@ version = get_version()
 
 
 # == INDEX PAGE ==
-# @app.route("/")
-# def index():
-#     return render_template(
-#         "index.html.j2", version=version, report_time="2024-07-07 @ 12:00"
-#     )
 @app.route("/")
 def index():
-    return render_template("monitoring-dashboard.html")
+    return render_template(
+        "index.html.j2", version=version, report_time="2024-07-07 @ 12:00"
+    )
 
 # @app.route("/plot/<plot_name>")
 # def plot(plot_name: str):
@@ -92,7 +91,7 @@ def get_plot(plot_name):
             'y': df['users'].tolist()
         }
         return jsonify(data)
-    return "Plot not found", 404
+    return jsonify({"error": "Plot not found"}), 404
 
 @app.route("/table/<table_name>")
 def table(table_name: str):
