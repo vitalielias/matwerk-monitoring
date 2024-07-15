@@ -1,0 +1,1 @@
+{"data": [{"type": "pie", "labels": ["Germany", "France", "Italy", "Spain", "Poland", "Czech Republic", "Netherlands", "Belgium", "Austria", "Switzerland"], "values": [602, 78, 44, 62, 27, 35, 16, 35, 28, 32], "name": "User Distribution by Country"}], "layout": {"title": "User Distribution by Country"}}

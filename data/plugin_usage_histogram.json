@@ -1,1 +1,33 @@
-{"data": [{"type": "bar", "x": ["MRI to JSON", "SEM/FIB Tomography Acquisition to TXT", "Thermo Fisher SEM TIFF to JSON", "Zeiss SEM to JSON", "SEM to TXT", "SEM/FIB Tomography Acquisition to JSON"], "y": [11, 6, 229, 426, 72, 9], "name": "Plugin Usage"}], "layout": {"title": "Histogram of Plugin Usage", "xaxis": {"title": "Plugin"}, "yaxis": {"title": "Number of JSON Metadata Files Generated"}}}
+{
+    "data": [
+        {
+            "type": "bar",
+            "x": [
+                "MRI to JSON",
+                "SEM/FIB Tomography Acquisition to TXT",
+                "Thermo Fisher SEM TIFF to JSON",
+                "Zeiss SEM to JSON",
+                "SEM to TXT",
+                "SEM/FIB Tomography Acquisition to JSON"
+            ],
+            "y": [
+                11,
+                6,
+                229,
+                426,
+                72,
+                9
+            ],
+            "name": "Plugin Usage"
+        }
+    ],
+    "layout": {
+        "title": "Plugin Usage",
+        "xaxis": {
+            "title": "Plugin Name"
+        },
+        "yaxis": {
+            "title": "Number of JSON Metadata Files Generated"
+        }
+    }
+}
