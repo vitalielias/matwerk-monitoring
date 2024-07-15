@@ -1,4 +1,5 @@
 {% from "components/card.html.j2" import plot_card, table_card %}
+{% from "components/small_card.html.j2" import small_card %}
 
 {% extends "partials/layout.html.j2" %}
 
@@ -10,6 +11,13 @@
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active" id="last_updated_time">Last Updated: {{ report_time }} </li>
     </ol>
+
+    <div class="row px-2" id="small-card-container">
+        {{ small_card("fas fa-project-diagram", "Sample Value", "100", "var(--bs-primary)") }}
+        {{ small_card("fas fa-project-diagram", "Key Point that is a Decimal", "23.9", "var(--bs-secondary)") }}
+        {{ small_card("fas fa-users", "Total Users", "1,234", "var(--bs-light)") }}
+        {{ small_card("fas fa-database", "Something Important", "Text Value", "var(--bs-dark)") }}
+    </div>
 
     <div class="row" id="card-container">
         {{ plot_card("sample", "Card Title for the sample plot", "fas
