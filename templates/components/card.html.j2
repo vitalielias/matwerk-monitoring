@@ -1,7 +1,7 @@
 {# This is the base card macro - all card styles go here #}
 
 {% macro card(id, title, icon=None, content=None, large=False, height=500) %}
-<div class="card-container {{ 'col-12' if large else 'col-xl-6 col-md-12' }}">
+<div class="card-container {{ 'col-12' if large else 'col-xl-6' }}">
     <div id="card-{{ id }}" class="card m-2 shadow" style="height: {{ height }}px;">
         <div class="card-header">
             <i class="{{ icon }}"></i>

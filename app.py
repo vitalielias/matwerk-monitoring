@@ -1,6 +1,7 @@
 import logging
 import os
 import tomllib
+import json
 
 from flask import Flask, render_template
 import pandas as pd
@@ -32,24 +33,10 @@ def plot(plot_name: str):
     """
     logging.info(f"Loading plot {plot_name}")
 
-    # Load a demo plot
-    if plot_name == "sample_plot":
-        return {
-            "data": [
-                {
-                    "type": "scatter",
-                    "x": [1, 2, 3, 4],
-                    "y": [10, 11, 12, 13],
-                    "mode": "lines+markers",
-                    "name": "Sample Plot",
-                }
-            ],
-            "layout": {
-                "title": "Sample Plot",
-                "xaxis": {"title": "X Axis"},
-                "yaxis": {"title": "Y Axis"},
-            },
-        }
+    plotFile = 'data/' + plot_name + '.json'
+    if os.path.isfile(plotFile):
+        with open(plotFile, 'r') as f:
+            return json.load(f)
 
     return {"error": f"Plot {plot_name} not found"}, 404
 
