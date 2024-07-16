@@ -1,0 +1,45 @@
+/* Set custom color profile here
+I picked the three colors from the logo and fed them into a palette generator:
+https://huemint.com/bootstrap-basic/#palette=dbe7ea-ffffff-001c74-62aefd-004a7b-4c64f3
+*/
+:root {
+    --bs-primary: #62AEFD;
+    --bs-secondary: #004A7B;
+    --bs-success: #09b364;
+    --bs-info: #18a5aa;
+    --bs-warning: #e8ce08;
+    --bs-danger: #fb0a03;
+    --bs-light: #adadad;
+    --bs-dark: #001c74;
+    --bs-white: #ffffff;
+}
+
+/* Styles for Small Cards */
+.small-card {
+    border-left-width: 0.75rem;
+    border-left-style: solid;
+}
+
+.small-card.primary {
+    border-left-color: var(--bs-primary);
+}
+
+.small-card.secondary {
+    border-left-color: var(--bs-secondary);
+}
+
+.small-card.success {
+    border-left-color: var(--bs-success);
+}
+
+.small-card.danger {
+    border-left-color: var(--bs-danger);
+}
+
+.small-card.warning {
+    border-left-color: var(--bs-warning);
+}
+
+.small-card.info {
+    border-left-color: var(--bs-info);
+}
