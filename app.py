@@ -2,6 +2,7 @@ import logging
 import os
 import tomllib
 import json
+from datetime import datetime
 
 from flask import Flask, render_template
 import pandas as pd
@@ -22,7 +23,7 @@ version = get_version()
 @app.route("/")
 def index():
     return render_template(
-        "index.html.j2", version=version, report_time="2024-06-28 @ 12:34"
+        "index.html.j2", version=version, report_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") #not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
     )
 
 
