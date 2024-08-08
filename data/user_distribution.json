@@ -1,1 +1,79 @@
-{"data": [{"type": "pie", "labels": ["Germany", "France", "Italy", "Spain", "Poland", "Czech Republic", "Netherlands", "Belgium", "Austria", "Switzerland"], "values": [602, 78, 44, 62, 27, 35, 16, 35, 28, 32], "name": "User Distribution by Country"}], "layout": {"title": "User Distribution by Country"}}
+{
+    "data": [
+        {
+            "type": "scattergeo",
+            "locationmode": "country names",
+            "lat": [
+                49.0067,
+                51.3673,
+                52.5200,
+                49.4875
+            ],
+            "lon": [
+                8.417,
+                12.441,
+                13.4050,
+                8.4660
+            ],
+            "text": [
+                "Karlsruhe: 47",
+                "Leipzig: 21",
+                "Berlin: 12",
+                "Mannheim: 3"
+            ],
+            "marker": {
+                "size": [
+                    47,
+                    21,
+                    12,
+                    3
+                ],
+                "color": [
+                    47,
+                    21,
+                    12,
+                    3
+                ],
+                "colorscale": "Viridis",
+                "colorbar": {
+                    "title": "Number of Users"
+                },
+                "line": {
+                    "color": "darkgray",
+                    "width": 0.5
+                }
+            }
+        }
+    ],
+    "layout": {
+        "title": "User Distribution in Germany",
+        "geo": {
+            "scope": "europe",
+            "projection": {
+                "type": "mercator"
+            },
+            "center": {
+                "lat": 51.1657,
+                "lon": 10.4515
+            },
+            "showland": true,
+            "landcolor": "rgb(217, 217, 217)",
+            "subunitwidth": 1,
+            "countrywidth": 1,
+            "subunitcolor": "rgb(255, 255, 255)",
+            "countrycolor": "rgb(255, 255, 255)",
+            "lonaxis": {
+                "range": [
+                    5.5,
+                    15.5
+                ]
+            },
+            "lataxis": {
+                "range": [
+                    47.0,
+                    55.0
+                ]
+            }
+        }
+    }
+}
