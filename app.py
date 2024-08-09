@@ -32,7 +32,7 @@ def index():
 
 
 @app.route("/mapping-service")
-def index():
+def mapping_service():
     return render_template(
         "mapping-service.html.j2",
         version=version,
