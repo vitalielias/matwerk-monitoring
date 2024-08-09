@@ -23,7 +23,22 @@ version = get_version()
 @app.route("/")
 def index():
     return render_template(
-        "index.html.j2", version=version, report_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") #not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+        "index.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+    )
+
+
+@app.route("/mapping-service")
+def index():
+    return render_template(
+        "mapping-service.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
     )
 
 
