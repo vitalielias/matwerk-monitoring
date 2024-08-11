@@ -20,7 +20,7 @@ version = get_version()
 
 
 # == INDEX PAGE ==
-@app.route("/")
+@app.route("/monitoring")
 def index():
     return render_template(
         "index.html.j2",
@@ -31,10 +31,50 @@ def index():
     )
 
 
-@app.route("/mapping-service")
+@app.route("/monitoring/mapping-service")
 def mapping_service():
     return render_template(
-        "mapping-service.html.j2",
+        "mapping-service-metrics.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+    )
+
+@app.route("/monitoring/evoks")
+def evoks():
+    return render_template(
+        "evoks-metrics.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+    )
+
+@app.route("/monitoring/repository")
+def repository():
+    return render_template(
+        "evoks-metrics.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+    )
+
+@app.route("/monitoring/DCE")
+def dce():
+    return render_template(
+        "evoks-metrics.html.j2",
+        version=version,
+        report_time=datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # not proper bc it updates when page is refreshed instead of when data is updated, but ok for now.
+    )
+
+@app.route("/monitoring/FAIRDOScope")
+def fairdoscope():
+    return render_template(
+        "evoks-metrics.html.j2",
         version=version,
         report_time=datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S"
