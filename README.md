@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project serves as the main frontend interface of the monitoring dashboard currently in development for serving usage metrics and KPIs about KIT-developed MatWerk services to a GUI, and is built using Flask and Jinja2.
+This project serves as the main frontend interface of the monitoring dashboard currently in development for serving usage metrics and KPIs about KIT-developed MatWerk services to a GUI, and is built using Flask and Jinja2. It has been adapted from a similar visualization dashboard for the [Coscine RDM platform](https://coscine-reporting.otc.coscine.dev/), with the main template source code available [here](https://git.rwth-aachen.de/jonathan.a.hartman1/rpdm-dashboard-template/-/tree/main).
 
 ## Installation
 
