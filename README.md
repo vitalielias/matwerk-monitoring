@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This project is a template example of a dashboard for the RPDM team using Flask and Jinja2. This
-project is limited to the front-end and does not include any real back-end functionality.
+This project serves as the main frontend interface of the monitoring dashboard currently in development for serving usage metrics and KPIs about KIT-developed MatWerk services to a GUI, and is built using Flask and Jinja2.
 
 ## Installation
 
@@ -12,8 +11,7 @@ This project requires Python 3.11 or higher in order to run.
 ### Poetry
 
 This project uses Poetry to manage dependencies. To install Poetry, refer to the
-[official documentation](https://python-poetry.org/docs/#installation). I also made a short reference
-for common questions we had internally that is available [here](https://liascript.github.io/course/?https://api.allorigins.win/raw?url=https://git.rwth-aachen.de/dl/workshops/package-management-with-poetry/-/raw/main/lia/script.md#1)
+[official documentation](https://python-poetry.org/docs/#installation).
 
 To install the dependencies, run the following command:
 
@@ -95,10 +93,6 @@ In order to link to the new page, you'll need to add the relative path to the si
 ## Adding New Scripts / Styles
 
 New scripts and styles can be added to the [static](https://git.rwth-aachen.de/jonathan.a.hartman1/rpdm-dashboard-template/-/tree/main/static) folder, then referenced in the [templates/partials/head.html.j2](https://git.rwth-aachen.de/jonathan.a.hartman1/rpdm-dashboard-template/-/blob/main/templates/partials/head.html.j2) or [templates/partials/scripts.html.j2](https://git.rwth-aachen.de/jonathan.a.hartman1/rpdm-dashboard-template/-/blob/main/templates/partials/scripts.html.j2) as appropriate.
-
-# Did I miss anything? Or is something not working? Did I do something strange or boneheaded?
-
-Probably. I'm kinda making this up as I go along. Open an issue and I'll take a look at it. 
 
 
 # Services to Monitor and their respective metrics
