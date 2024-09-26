@@ -54,7 +54,7 @@ def evoks():
 @app.route("/monitoring/repository")
 def repository():
     return render_template(
-        "evoks-metrics.html.j2",
+        "repo-metrics.html.j2",
         version=version,
         report_time=datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -64,7 +64,7 @@ def repository():
 @app.route("/monitoring/DCE")
 def dce():
     return render_template(
-        "evoks-metrics.html.j2",
+        "dce-metrics.html.j2",
         version=version,
         report_time=datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -74,7 +74,7 @@ def dce():
 @app.route("/monitoring/FAIRDOScope")
 def fairdoscope():
     return render_template(
-        "evoks-metrics.html.j2",
+        "fds-metrics.html.j2",
         version=version,
         report_time=datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S"
