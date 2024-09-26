@@ -1,0 +1,28 @@
+{% from "components/card.html.j2" import plot_card, table_card %}
+{% from "components/small_card.html.j2" import small_card %}
+{% from "components/medium_card.html.j2" import medium_card %}
+
+{% extends "partials/layout.html.j2" %}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Data Collections Explorer Metrics</h1>
+    <p><i>Usage metrics for the Data Collections Explorer</i></p>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active" id="last_updated_time">Last Updated: {{ report_time }} </li>
+    </ol>
+
+    <div class="row px-2" id="small-card-container">
+        {{ small_card("fas fa-users", "Total Accesses", "2463", "var(--bs-secondary)") }}
+    </div>
+    <div class="row", id="card-container">
+        {{ plot_card("DCE_user_growth", "Number of Page Accesses (SAMPLE DATA)", "fas fa-users me-1") }}
+        {{ plot_card("DCE_unique_accesses", "Number of page accesses from unique users (SAMPLE DATA)", "fas fa-users me-1") }}
+        {{ plot_card("DCE_user_distribution", "Geographical distribution of users (SAMPLE DATA)", "fas fas fa-earth-americas me-1", large=True) }}
+        {#{ plot_card("user_distribution_map", "Geographical distribution of users (SAMPLE DATA)", "fas fa-earth-americas me-1") }#}
+        {#{ table_card("Card Title for the table", "sample_table")}#}
+    </div>
+</div>
+
+{% endblock %}
