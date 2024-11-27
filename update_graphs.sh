@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-MASTER_FILE="master_accesses.json"
+MASTER_FILE="./data/master_accesses.json"  # Ensure the master file is in the ./data directory
 OUTPUT_DIR="./data"
 DEBUG_LOG="$OUTPUT_DIR/debug.log"
 
