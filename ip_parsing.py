@@ -34,12 +34,20 @@ def parse_ips(input_file, output_dir):
             response = requests.get(f"http://ip-api.com/json/{ip}")
             if response.status_code == 200:
                 result = response.json()
-                if result['status'] == 'success' and result['country'] == 'Germany':
+                if (
+                    result['status'] == 'success'
+                    and result.get('city')
+                    and result.get('lat')
+                    and result.get('lon')
+                ):
+                    # Only include public IPs with valid location data
                     city = result['city']
                     location_counts[city] += 1
                     city_coordinates[city] = (result['lat'], result['lon'])
+                elif result['status'] == 'fail' and result.get('message') == 'private range':
+                    print(f"Skipping private IP: {ip}")
         except Exception as e:
-            print(f"Error processing entry {entry}: {e}")
+            print(f"Error processing IP {ip}: {e}")
 
     # Prepare daily and cumulative data
     sorted_days = sorted(accesses_per_day.keys())
@@ -125,6 +133,41 @@ def parse_ips(input_file, output_dir):
         }
     }
 
+    user_distribution_data = {
+        "data": [
+            {
+                "type": "scattergeo",
+                "locationmode": "country names",
+                "lat": [coords[0] for coords in city_coordinates.values()],
+                "lon": [coords[1] for coords in city_coordinates.values()],
+                "text": [f"{city}: {count}" for city, count in location_counts.items()],
+                "marker": {
+                    "size": [count for count in location_counts.values()],
+                    "color": [count for count in location_counts.values()],
+                    "colorscale": "Viridis",
+                    "colorbar": {"title": "Number of Users"},
+                    "line": {"color": "darkgray", "width": 0.5},
+                },
+            }
+        ],
+        "layout": {
+            "title": "User Distribution",
+            "geo": {
+                "scope": "world",  # No restriction to Germany
+                "projection": {"type": "mercator"},
+                "center": {"lat": 51.1657, "lon": 10.4515},  # Centered on Germany
+                "showland": True,
+                "landcolor": "rgb(217, 217, 217)",
+                "showlakes": True,
+                "lakecolor": "rgb(255, 255, 255)",
+                "subunitwidth": 1,
+                "countrywidth": 1,
+                "subunitcolor": "rgb(255, 255, 255)",
+                "countrycolor": "rgb(255, 255, 255)",
+            },
+        },
+    }
+
     # Save JSON data
     os.makedirs(output_dir, exist_ok=True)
     with open(os.path.join(output_dir, 'MS_user_growth.json'), 'w') as file:
@@ -135,6 +178,8 @@ def parse_ips(input_file, output_dir):
         json.dump(cumulative_user_growth_data, file, indent=4)
     with open(os.path.join(output_dir, 'MS_cumulative_unique_user_growth.json'), 'w') as file:
         json.dump(cumulative_unique_user_growth_data, file, indent=4)
+    with open(os.path.join(output_dir, 'user_distribution.json'), 'w') as file:
+        json.dump(user_distribution_data, file, indent=4)
 
 
 if __name__ == "__main__":
