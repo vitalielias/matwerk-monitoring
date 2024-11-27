@@ -1,11 +1,17 @@
 import json
+import os
+import sys
 from datetime import datetime
 from collections import defaultdict
 import requests
-import os
+
 
 def parse_ips(input_file, output_dir):
     # Load data
+    if not os.path.exists(input_file):
+        print(f"Error: Input file '{input_file}' not found.")
+        sys.exit(1)
+
     with open(input_file, 'r') as file:
         data = json.load(file)
 
@@ -16,21 +22,24 @@ def parse_ips(input_file, output_dir):
     city_coordinates = {}
 
     for entry in data:
-        timestamp = datetime.fromisoformat(entry['timestamp'])
-        hour = timestamp.replace(minute=0, second=0, microsecond=0)
-        ip = entry['ip']
+        try:
+            timestamp = datetime.strptime(entry['timestamp'], "%d/%b/%Y:%H:%M:%S %z")
+            hour = timestamp.replace(minute=0, second=0, microsecond=0)
+            ip = entry['ip']
 
-        accesses_per_hour[hour] += 1
-        unique_accesses_per_hour[hour].add(ip)
+            accesses_per_hour[hour] += 1
+            unique_accesses_per_hour[hour].add(ip)
 
-        # Get location data
-        response = requests.get(f"http://ip-api.com/json/{ip}")
-        if response.status_code == 200:
-            result = response.json()
-            if result['status'] == 'success' and result['country'] == 'Germany':
-                city = result['city']
-                location_counts[city] += 1
-                city_coordinates[city] = (result['lat'], result['lon'])
+            # Get location data
+            response = requests.get(f"http://ip-api.com/json/{ip}")
+            if response.status_code == 200:
+                result = response.json()
+                if result['status'] == 'success' and result['country'] == 'Germany':
+                    city = result['city']
+                    location_counts[city] += 1
+                    city_coordinates[city] = (result['lat'], result['lon'])
+        except Exception as e:
+            print(f"Error processing entry {entry}: {e}")
 
     # Prepare JSON data
     user_growth_data = {
@@ -91,13 +100,7 @@ def parse_ips(input_file, output_dir):
                 "projection": {"type": "mercator"},
                 "center": {"lat": 51.1657, "lon": 10.4515},  # Centered on Germany
                 "showland": True,
-                "landcolor": "rgb(217, 217, 217)",
-                "subunitwidth": 1,
-                "countrywidth": 1,
-                "subunitcolor": "rgb(255, 255, 255)",
-                "countrycolor": "rgb(255, 255, 255)",
-                "lonaxis": {"range": [5.5, 15.5]},  # Approximate bounds for Germany
-                "lataxis": {"range": [47.0, 55.0]}  # Approximate bounds for Germany
+                "landcolor": "rgb(217, 217, 217)"
             }
         }
     }
@@ -112,6 +115,11 @@ def parse_ips(input_file, output_dir):
         json.dump(user_distribution_data, file, indent=4)
 
 
-input_file = '/var/www/matwerk-monitoring/data/ips_2024-08-1_timestamps.json'
-output_dir = '/var/www/matwerk-monitoring/data/'
-parse_ips(input_file, output_dir)
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python3 ip_parsing.py <input_file> <output_dir>")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    output_dir = sys.argv[2]
+    parse_ips(input_file, output_dir)
