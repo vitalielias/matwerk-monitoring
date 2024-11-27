@@ -127,13 +127,13 @@ def parse_ips(input_file, output_dir):
 
     # Save JSON data
     os.makedirs(output_dir, exist_ok=True)
-    with open(os.path.join(output_dir, 'user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, 'MS_user_growth.json'), 'w') as file:
         json.dump(user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'unique_accesses.json'), 'w') as file:
+    with open(os.path.join(output_dir, 'MS_unique_accesses.json'), 'w') as file:
         json.dump(unique_accesses_data, file, indent=4)
-    with open(os.path.join(output_dir, 'cumulative_user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, 'MS_cumulative_user_growth.json'), 'w') as file:
         json.dump(cumulative_user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'cumulative_unique_user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, 'MS_cumulative_unique_user_growth.json'), 'w') as file:
         json.dump(cumulative_unique_user_growth_data, file, indent=4)
 
 
