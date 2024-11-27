@@ -178,7 +178,7 @@ def parse_ips(input_file, output_dir):
         json.dump(cumulative_user_growth_data, file, indent=4)
     with open(os.path.join(output_dir, 'MS_cumulative_unique_user_growth.json'), 'w') as file:
         json.dump(cumulative_unique_user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'user_distribution.json'), 'w') as file:
+    with open(os.path.join(output_dir, 'MS_user_distribution.json'), 'w') as file:
         json.dump(user_distribution_data, file, indent=4)
 
 
