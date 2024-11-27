@@ -16,19 +16,19 @@ def parse_ips(input_file, output_dir):
         data = json.load(file)
 
     # Prepare data structures
-    accesses_per_hour = defaultdict(int)
-    unique_accesses_per_hour = defaultdict(set)
+    accesses_per_day = defaultdict(int)
+    unique_accesses_per_day = defaultdict(set)
     location_counts = defaultdict(int)
     city_coordinates = {}
 
     for entry in data:
         try:
             timestamp = datetime.strptime(entry['timestamp'], "%d/%b/%Y:%H:%M:%S %z")
-            hour = timestamp.replace(minute=0, second=0, microsecond=0)
+            day = timestamp.date()  # Aggregate by date (ignoring time)
             ip = entry['ip']
 
-            accesses_per_hour[hour] += 1
-            unique_accesses_per_hour[hour].add(ip)
+            accesses_per_day[day] += 1
+            unique_accesses_per_day[day].add(ip)
 
             # Get location data
             response = requests.get(f"http://ip-api.com/json/{ip}")
@@ -41,21 +41,53 @@ def parse_ips(input_file, output_dir):
         except Exception as e:
             print(f"Error processing entry {entry}: {e}")
 
-    # Prepare JSON data
+    # Prepare daily and cumulative data
+    sorted_days = sorted(accesses_per_day.keys())
+    cumulative_accesses = []
+    cumulative_unique_users = []
+
+    total_accesses = 0
+    unique_users_set = set()
+
+    for day in sorted_days:
+        total_accesses += accesses_per_day[day]
+        unique_users_set.update(unique_accesses_per_day[day])
+
+        cumulative_accesses.append(total_accesses)
+        cumulative_unique_users.append(len(unique_users_set))
+
+    # Prepare JSON data for growth rate and cumulative graphs
     user_growth_data = {
         "data": [
             {
                 "type": "scatter",
-                "x": [hour.isoformat() for hour in sorted(accesses_per_hour.keys())],
-                "y": [accesses_per_hour[hour] for hour in sorted(accesses_per_hour.keys())],
+                "x": [day.isoformat() for day in sorted_days],
+                "y": [accesses_per_day[day] for day in sorted_days],
                 "mode": "lines+markers",
-                "name": "User Accesses"
+                "name": "Daily Accesses"
             }
         ],
         "layout": {
-            "title": "Number of Accesses per Hour",
-            "xaxis": {"title": "Time"},
+            "title": "User Growth (Daily Accesses)",
+            "xaxis": {"title": "Date"},
             "yaxis": {"title": "Number of Accesses"}
+        }
+    }
+
+    cumulative_user_growth_data = {
+        "data": [
+            {
+                "type": "scatter",
+                "x": [day.isoformat() for day in sorted_days],
+                "y": cumulative_accesses,
+                "mode": "lines+markers",
+                "name": "Cumulative Accesses"
+            }
+        ],
+        "layout": {
+            "title": "Cumulative User Growth",
+            "xaxis": {"title": "Date"},
+            "yaxis": {"title": "Cumulative Accesses"}
         }
     }
 
@@ -63,16 +95,33 @@ def parse_ips(input_file, output_dir):
         "data": [
             {
                 "type": "scatter",
-                "x": [hour.isoformat() for hour in sorted(unique_accesses_per_hour.keys())],
-                "y": [len(unique_accesses_per_hour[hour]) for hour in sorted(unique_accesses_per_hour.keys())],
+                "x": [day.isoformat() for day in sorted_days],
+                "y": [len(unique_accesses_per_day[day]) for day in sorted_days],
                 "mode": "lines+markers",
-                "name": "Unique User Accesses"
+                "name": "Unique Daily Users"
             }
         ],
         "layout": {
-            "title": "Number of Unique Accesses per Hour",
-            "xaxis": {"title": "Time"},
-            "yaxis": {"title": "Number of Unique Accesses"}
+            "title": "Unique User Growth (Daily)",
+            "xaxis": {"title": "Date"},
+            "yaxis": {"title": "Number of Unique Users"}
+        }
+    }
+
+    cumulative_unique_user_growth_data = {
+        "data": [
+            {
+                "type": "scatter",
+                "x": [day.isoformat() for day in sorted_days],
+                "y": cumulative_unique_users,
+                "mode": "lines+markers",
+                "name": "Cumulative Unique Users"
+            }
+        ],
+        "layout": {
+            "title": "Cumulative Unique User Growth",
+            "xaxis": {"title": "Date"},
+            "yaxis": {"title": "Cumulative Unique Users"}
         }
     }
 
@@ -111,6 +160,10 @@ def parse_ips(input_file, output_dir):
         json.dump(user_growth_data, file, indent=4)
     with open(os.path.join(output_dir, 'unique_accesses.json'), 'w') as file:
         json.dump(unique_accesses_data, file, indent=4)
+    with open(os.path.join(output_dir, 'cumulative_user_growth.json'), 'w') as file:
+        json.dump(cumulative_user_growth_data, file, indent=4)
+    with open(os.path.join(output_dir, 'cumulative_unique_user_growth.json'), 'w') as file:
+        json.dump(cumulative_unique_user_growth_data, file, indent=4)
     with open(os.path.join(output_dir, 'user_distribution.json'), 'w') as file:
         json.dump(user_distribution_data, file, indent=4)
 
