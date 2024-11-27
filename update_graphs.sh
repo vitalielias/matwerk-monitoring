@@ -40,7 +40,7 @@ if [ -n "$new_entries" ]; then
     echo "[$(date)] Added new entries to $OUTPUT_JSON_PATH" >> "$DEBUG_LOG"
 
     # Run the Python parser
-    python3 /path/to/ip_parsing.py "$OUTPUT_JSON_PATH" "$OUTPUT_DIR"
+    python3 ip_parsing.py "$OUTPUT_JSON_PATH" "$OUTPUT_DIR"
 else
     echo "[$(date)] No new entries found" >> "$DEBUG_LOG"
 fi
