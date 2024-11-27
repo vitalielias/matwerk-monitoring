@@ -16,9 +16,10 @@ CURRENT_PERIOD=$(date +"%Y-%m")-$(($(date +%d)/15+1))
 OUTPUT_JSON_PATH="$OUTPUT_DIR/ips_$CURRENT_PERIOD.json"
 
 # Log the current operation
-echo "[$(date)] Starting log update" >> "$DEBUG_LOG"
+echo "[$(date)] Starting log update" | tee -a "$DEBUG_LOG"
 
 # Extract new entries from the log file
+echo "Extracting new entries from Apache logs..."
 new_entries=$(grep "GET ${TRACKED_PAGE}" "${LOG_FILE_PATH}" | awk '{print "{\"ip\": \"" $1 "\", \"url\": \"" $7 "\", \"timestamp\": \"" $4 " " $5 "\"}"}' | sed 's/\[//;s/\]//' | grep -F -v -f "$SEEN_LOG")
 
 # Check if new entries are found
@@ -28,22 +29,36 @@ if [ -n "$new_entries" ]; then
 
     # Initialize the JSON array if the file does not exist
     if [ ! -f "$OUTPUT_JSON_PATH" ]; then
+        echo "Initializing new data file: $OUTPUT_JSON_PATH"
         echo "[]" > "$OUTPUT_JSON_PATH"
     fi
 
     # Merge the new entries into the current JSON file
+    echo "Adding new entries to $OUTPUT_JSON_PATH..."
     tmpfile=$(mktemp)
     new_entries_json=$(echo "$new_entries" | jq -s '.')
     jq ". + $new_entries_json" "$OUTPUT_JSON_PATH" > "$tmpfile" && mv "$tmpfile" "$OUTPUT_JSON_PATH"
 
     # Log the new entries added
-    echo "[$(date)] Added new entries to $OUTPUT_JSON_PATH" >> "$DEBUG_LOG"
+    echo "[$(date)] Added new entries to $OUTPUT_JSON_PATH" | tee -a "$DEBUG_LOG"
+    echo "New entries successfully added to $OUTPUT_JSON_PATH."
 
     # Run the Python parser
+    echo "Running the Python parser to update graph data..."
     python3 ip_parsing.py "$OUTPUT_JSON_PATH" "$OUTPUT_DIR"
+    if [ $? -eq 0 ]; then
+        echo "Python parser ran successfully. Graph data updated."
+        echo "[$(date)] Python parser ran successfully." >> "$DEBUG_LOG"
+    else
+        echo "Error: Python parser encountered an issue. Check logs for details."
+        echo "[$(date)] Python parser failed." >> "$DEBUG_LOG"
+        exit 1
+    fi
 else
-    echo "[$(date)] No new entries found" >> "$DEBUG_LOG"
+    echo "No new entries found in the logs."
+    echo "[$(date)] No new entries found for ${TRACKED_PAGE}" >> "$DEBUG_LOG"
 fi
 
 # Log completion
-echo "[$(date)] Update completed" >> "$DEBUG_LOG"
+echo "[$(date)] Update completed" | tee -a "$DEBUG_LOG"
+echo "Update process completed successfully."
