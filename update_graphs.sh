@@ -1,64 +1,40 @@
 #!/bin/bash
 
 # Configuration
-LOG_FILE_PATH="/var/log/apache2/access.log"
-OUTPUT_DIR="/var/www/matwerk-monitoring/data"
-TRACKED_PAGE="/frontend/mapping-service-ui.html"
+MASTER_FILE="master_accesses.json"
+OUTPUT_DIR="./data"
 DEBUG_LOG="$OUTPUT_DIR/debug.log"
-SEEN_LOG="$OUTPUT_DIR/seen_ips.log" # File to track processed log entries
 
-# Ensure necessary directories and files exist
+# Ensure the output directory exists
 mkdir -p "$OUTPUT_DIR"
-touch "$SEEN_LOG"
 
-# Determine the current JSON file based on the two-week period
-CURRENT_PERIOD=$(date +"%Y-%m")-$(($(date +%d)/15+1))
-OUTPUT_JSON_PATH="$OUTPUT_DIR/ips_$CURRENT_PERIOD.json"
+# Log operation
+echo "[$(date)] Starting update process." | tee -a "$DEBUG_LOG"
 
-# Log the current operation
-echo "[$(date)] Starting log update" | tee -a "$DEBUG_LOG"
+# Run the extract_ips.sh script
+echo "Running extract_ips.sh to update master_accesses.json..."
+bash extract_ips.sh
+if [ $? -ne 0 ]; then
+    echo "[$(date)] Error: extract_ips.sh failed. Check logs." | tee -a "$DEBUG_LOG"
+    exit 1
+fi
+echo "extract_ips.sh completed successfully."
 
-# Extract new entries from the log file
-echo "Extracting new entries from Apache logs..."
-new_entries=$(grep "GET ${TRACKED_PAGE}" "${LOG_FILE_PATH}" | awk '{print "{\"ip\": \"" $1 "\", \"url\": \"" $7 "\", \"timestamp\": \"" $4 " " $5 "\"}"}' | sed 's/\[//;s/\]//' | grep -F -v -f "$SEEN_LOG")
+# Ensure master file exists
+if [ ! -f "$MASTER_FILE" ]; then
+    echo "Error: Master file '$MASTER_FILE' not found. Check extract_ips.sh output." | tee -a "$DEBUG_LOG"
+    exit 1
+fi
 
-# Check if new entries are found
-if [ -n "$new_entries" ]; then
-    # Append new entries to the seen log
-    echo "$new_entries" | awk -F'"' '{print $4}' >> "$SEEN_LOG"
-
-    # Initialize the JSON array if the file does not exist
-    if [ ! -f "$OUTPUT_JSON_PATH" ]; then
-        echo "Initializing new data file: $OUTPUT_JSON_PATH"
-        echo "[]" > "$OUTPUT_JSON_PATH"
-    fi
-
-    # Merge the new entries into the current JSON file
-    echo "Adding new entries to $OUTPUT_JSON_PATH..."
-    tmpfile=$(mktemp)
-    new_entries_json=$(echo "$new_entries" | jq -s '.')
-    jq ". + $new_entries_json" "$OUTPUT_JSON_PATH" > "$tmpfile" && mv "$tmpfile" "$OUTPUT_JSON_PATH"
-
-    # Log the new entries added
-    echo "[$(date)] Added new entries to $OUTPUT_JSON_PATH" | tee -a "$DEBUG_LOG"
-    echo "New entries successfully added to $OUTPUT_JSON_PATH."
-
-    # Run the Python parser
-    echo "Running the Python parser to update graph data..."
-    python3 ip_parsing.py "$OUTPUT_JSON_PATH" "$OUTPUT_DIR"
-    if [ $? -eq 0 ]; then
-        echo "Python parser ran successfully. Graph data updated."
-        echo "[$(date)] Python parser ran successfully." >> "$DEBUG_LOG"
-    else
-        echo "Error: Python parser encountered an issue. Check logs for details."
-        echo "[$(date)] Python parser failed." >> "$DEBUG_LOG"
-        exit 1
-    fi
+# Run the Python parser
+echo "Running the Python parser to update graph data..."
+python3 ip_parsing.py "$MASTER_FILE" "$OUTPUT_DIR"
+if [ $? -eq 0 ]; then
+    echo "[$(date)] Graphs updated successfully." | tee -a "$DEBUG_LOG"
 else
-    echo "No new entries found in the logs."
-    echo "[$(date)] No new entries found for ${TRACKED_PAGE}" >> "$DEBUG_LOG"
+    echo "[$(date)] Error: Python parser failed. Check logs." | tee -a "$DEBUG_LOG"
+    exit 1
 fi
 
 # Log completion
-echo "[$(date)] Update completed" | tee -a "$DEBUG_LOG"
-echo "Update process completed successfully."
+echo "[$(date)] Update process completed successfully." | tee -a "$DEBUG_LOG"

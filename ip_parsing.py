@@ -24,7 +24,7 @@ def parse_ips(input_file, output_dir):
     for entry in data:
         try:
             timestamp = datetime.strptime(entry['timestamp'], "%d/%b/%Y:%H:%M:%S %z")
-            day = timestamp.date()  # Aggregate by date (ignoring time)
+            day = timestamp.date()  # Aggregate by date
             ip = entry['ip']
 
             accesses_per_day[day] += 1
@@ -69,7 +69,7 @@ def parse_ips(input_file, output_dir):
         ],
         "layout": {
             "title": "User Growth (Daily Accesses)",
-            "xaxis": {"title": "Date"},
+            "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Accesses"}
         }
     }
@@ -86,7 +86,7 @@ def parse_ips(input_file, output_dir):
         ],
         "layout": {
             "title": "Cumulative User Growth",
-            "xaxis": {"title": "Date"},
+            "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Cumulative Accesses"}
         }
     }
@@ -103,7 +103,7 @@ def parse_ips(input_file, output_dir):
         ],
         "layout": {
             "title": "Unique User Growth (Daily)",
-            "xaxis": {"title": "Date"},
+            "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Unique Users"}
         }
     }
@@ -120,37 +120,8 @@ def parse_ips(input_file, output_dir):
         ],
         "layout": {
             "title": "Cumulative Unique User Growth",
-            "xaxis": {"title": "Date"},
+            "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Cumulative Unique Users"}
-        }
-    }
-
-    user_distribution_data = {
-        "data": [
-            {
-                "type": "scattergeo",
-                "locationmode": "country names",
-                "lat": [coords[0] for coords in city_coordinates.values()],
-                "lon": [coords[1] for coords in city_coordinates.values()],
-                "text": [f"{city}: {count}" for city, count in location_counts.items()],
-                "marker": {
-                    "size": [count for count in location_counts.values()],
-                    "color": [count for count in location_counts.values()],
-                    "colorscale": "Viridis",
-                    "colorbar": {"title": "Number of Users"},
-                    "line": {"color": "darkgray", "width": 0.5}
-                }
-            }
-        ],
-        "layout": {
-            "title": "User Distribution in Germany",
-            "geo": {
-                "scope": "europe",
-                "projection": {"type": "mercator"},
-                "center": {"lat": 51.1657, "lon": 10.4515},  # Centered on Germany
-                "showland": True,
-                "landcolor": "rgb(217, 217, 217)"
-            }
         }
     }
 
@@ -164,8 +135,6 @@ def parse_ips(input_file, output_dir):
         json.dump(cumulative_user_growth_data, file, indent=4)
     with open(os.path.join(output_dir, 'cumulative_unique_user_growth.json'), 'w') as file:
         json.dump(cumulative_unique_user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'user_distribution.json'), 'w') as file:
-        json.dump(user_distribution_data, file, indent=4)
 
 
 if __name__ == "__main__":
