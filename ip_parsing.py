@@ -5,8 +5,7 @@ from datetime import datetime
 from collections import defaultdict
 import requests
 
-
-def parse_ips(input_file, output_dir):
+def parse_ips(input_file, output_dir, prefix):
     # Load data
     if not os.path.exists(input_file):
         print(f"Error: Input file '{input_file}' not found.")
@@ -27,10 +26,11 @@ def parse_ips(input_file, output_dir):
             day = timestamp.date()  # Aggregate by date
             ip = entry['ip']
 
+            # Update counts for daily and unique users
             accesses_per_day[day] += 1
             unique_accesses_per_day[day].add(ip)
 
-            # Get location data
+            # Fetch geolocation data and add to map only if public IP
             response = requests.get(f"http://ip-api.com/json/{ip}")
             if response.status_code == 200:
                 result = response.json()
@@ -45,9 +45,9 @@ def parse_ips(input_file, output_dir):
                     location_counts[city] += 1
                     city_coordinates[city] = (result['lat'], result['lon'])
                 elif result['status'] == 'fail' and result.get('message') == 'private range':
-                    print(f"Skipping private IP: {ip}")
+                    print(f"Private IP detected (excluded from map): {ip}")
         except Exception as e:
-            print(f"Error processing IP {ip}: {e}")
+            print(f"Error processing entry {entry}: {e}")
 
     # Prepare daily and cumulative data
     sorted_days = sorted(accesses_per_day.keys())
@@ -76,7 +76,7 @@ def parse_ips(input_file, output_dir):
             }
         ],
         "layout": {
-            "title": "User Growth (Daily Accesses)",
+            "title": f"User Growth ({prefix.capitalize()} Daily Accesses)",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Accesses"}
         }
@@ -93,7 +93,7 @@ def parse_ips(input_file, output_dir):
             }
         ],
         "layout": {
-            "title": "Cumulative User Growth",
+            "title": f"Cumulative User Growth ({prefix.capitalize()})",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Cumulative Accesses"}
         }
@@ -110,7 +110,7 @@ def parse_ips(input_file, output_dir):
             }
         ],
         "layout": {
-            "title": "Unique User Growth (Daily)",
+            "title": f"Unique User Growth ({prefix.capitalize()} Daily)",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Unique Users"}
         }
@@ -127,7 +127,7 @@ def parse_ips(input_file, output_dir):
             }
         ],
         "layout": {
-            "title": "Cumulative Unique User Growth",
+            "title": f"Cumulative Unique User Growth ({prefix.capitalize()})",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Cumulative Unique Users"}
         }
@@ -151,7 +151,7 @@ def parse_ips(input_file, output_dir):
             }
         ],
         "layout": {
-            "title": "User Distribution",
+            "title": f"User Distribution ({prefix.capitalize()})",
             "geo": {
                 "scope": "world",  # No restriction to Germany
                 "projection": {"type": "mercator"},
@@ -170,23 +170,31 @@ def parse_ips(input_file, output_dir):
 
     # Save JSON data
     os.makedirs(output_dir, exist_ok=True)
-    with open(os.path.join(output_dir, 'MS_user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, f'{prefix}_user_growth.json'), 'w') as file:
         json.dump(user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'MS_unique_accesses.json'), 'w') as file:
+    with open(os.path.join(output_dir, f'{prefix}_unique_accesses.json'), 'w') as file:
         json.dump(unique_accesses_data, file, indent=4)
-    with open(os.path.join(output_dir, 'MS_cumulative_user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, f'{prefix}_cumulative_user_growth.json'), 'w') as file:
         json.dump(cumulative_user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'MS_cumulative_unique_user_growth.json'), 'w') as file:
+    with open(os.path.join(output_dir, f'{prefix}_cumulative_unique_user_growth.json'), 'w') as file:
         json.dump(cumulative_unique_user_growth_data, file, indent=4)
-    with open(os.path.join(output_dir, 'MS_user_distribution.json'), 'w') as file:
+    with open(os.path.join(output_dir, f'{prefix}_user_distribution.json'), 'w') as file:
         json.dump(user_distribution_data, file, indent=4)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python3 ip_parsing.py <input_file> <output_dir>")
+    if len(sys.argv) != 4:
+        print("Usage: python3 ip_parsing.py <input_file> <output_dir> <prefix>")
         sys.exit(1)
 
     input_file = sys.argv[1]
     output_dir = sys.argv[2]
-    parse_ips(input_file, output_dir)
+    prefix = sys.argv[3]
+    parse_ips(input_file, output_dir, prefix)
+
+# # Write the script to a file for download
+# file_path = "/mnt/data/ip_parsing_updated.py"
+# with open(file_path, "w") as file:
+#     file.write(ip_parsing_script)
+
+# file_path
