@@ -24,15 +24,17 @@ def parse_ips(input_file, output_dir, prefix):
 
     for entry in data:
         try:
-            timestamp = datetime.strptime(entry['timestamp'], "%d/%b/%Y:%H:%M:%S %z")
+            # Clean timestamp and parse
+            raw_timestamp = entry['timestamp'].strip("[]")
+            timestamp = datetime.strptime(raw_timestamp, "%d/%b/%Y:%H:%M:%S %z")
             day = timestamp.date()  # Aggregate by date
             ip = entry['ip']
 
             # Update counts for daily and unique users
             accesses_per_day[day] += 1
             unique_accesses_per_day[day].add(ip)
-
-            # Fetch geolocation data and add to map only if public IP
+            
+            # Fetch geolocation data and handle map updates
             response = requests.get(f"http://ip-api.com/json/{ip}")
             if response.status_code == 200:
                 result = response.json()
@@ -42,16 +44,14 @@ def parse_ips(input_file, output_dir, prefix):
                     and result.get('lat')
                     and result.get('lon')
                 ):
-                    # Only include public IPs with valid location data
                     city = result['city']
-                    if city not in city_coordinates:
-                        new_locations.add(city)
                     location_counts[city] += 1
                     city_coordinates[city] = (result['lat'], result['lon'])
                 elif result['status'] == 'fail' and result.get('message') == 'private range':
                     print(f"Private IP detected (excluded from map): {ip}")
         except Exception as e:
             print(f"Error processing entry {entry}: {e}")
+
 
     # Prepare daily and cumulative data
     sorted_days = sorted(accesses_per_day.keys())
