@@ -1,40 +1,59 @@
 #!/bin/bash
 
 # Configuration
-MASTER_FILE="./data/master_accesses.json"  # Ensure the master file is in the ./data directory
 OUTPUT_DIR="./data"
 DEBUG_LOG="$OUTPUT_DIR/debug.log"
+MAPPING_MASTER_FILE="$OUTPUT_DIR/mapping_master_accesses.json"
+BASEREPO_MASTER_FILE="$OUTPUT_DIR/baserepo_master_accesses.json"
 
 # Ensure the output directory exists
 mkdir -p "$OUTPUT_DIR"
 
 # Log operation
-echo "[$(date)] Starting update process." | tee -a "$DEBUG_LOG"
+echo "[$(date)] Starting update process for all services." | tee -a "$DEBUG_LOG"
 
-# Run the extract_ips.sh script
-echo "Running extract_ips.sh to update master_accesses.json..."
-bash extract_ips.sh
+# Run extract_ips_mapping.sh
+echo "Running extract_ips_mapping.sh..."
+bash extract_ips_mapping.sh
 if [ $? -ne 0 ]; then
-    echo "[$(date)] Error: extract_ips.sh failed. Check logs." | tee -a "$DEBUG_LOG"
-    exit 1
-fi
-echo "extract_ips.sh completed successfully."
-
-# Ensure master file exists
-if [ ! -f "$MASTER_FILE" ]; then
-    echo "Error: Master file '$MASTER_FILE' not found. Check extract_ips.sh output." | tee -a "$DEBUG_LOG"
+    echo "[$(date)] Error: extract_ips_mapping.sh failed. Check logs." | tee -a "$DEBUG_LOG"
     exit 1
 fi
 
-# Run the Python parser
-echo "Running the Python parser to update graph data..."
-python3 ip_parsing.py "$MASTER_FILE" "$OUTPUT_DIR"
-if [ $? -eq 0 ]; then
-    echo "[$(date)] Graphs updated successfully." | tee -a "$DEBUG_LOG"
+# Run extract_ips_baserepo.sh
+echo "Running extract_ips_baserepo.sh..."
+bash extract_ips_baserepo.sh
+if [ $? -ne 0 ]; then
+    echo "[$(date)] Error: extract_ips_baserepo.sh failed. Check logs." | tee -a "$DEBUG_LOG"
+    exit 1
+fi
+
+# Run the Python parser for mapping service
+if [ -f "$MAPPING_MASTER_FILE" ]; then
+    echo "Running the Python parser for mapping service..."
+    python3 ip_parsing.py "$MAPPING_MASTER_FILE" "$OUTPUT_DIR" "mapping"
+    if [ $? -eq 0 ]; then
+        echo "[$(date)] Mapping graphs updated successfully." | tee -a "$DEBUG_LOG"
+    else
+        echo "[$(date)] Error: Python parser for mapping service failed. Check logs." | tee -a "$DEBUG_LOG"
+        exit 1
+    fi
 else
-    echo "[$(date)] Error: Python parser failed. Check logs." | tee -a "$DEBUG_LOG"
-    exit 1
+    echo "[$(date)] Warning: Mapping master file not found. Skipping." | tee -a "$DEBUG_LOG"
 fi
 
-# Log completion
-echo "[$(date)] Update process completed successfully." | tee -a "$DEBUG_LOG"
+# Run the Python parser for baserepo services
+if [ -f "$BASEREPO_MASTER_FILE" ]; then
+    echo "Running the Python parser for baserepo services..."
+    python3 ip_parsing.py "$BASEREPO_MASTER_FILE" "$OUTPUT_DIR" "baserepo"
+    if [ $? -eq 0 ]; then
+        echo "[$(date)] Baserepo graphs updated successfully." | tee -a "$DEBUG_LOG"
+    else
+        echo "[$(date)] Error: Python parser for baserepo services failed. Check logs." | tee -a "$DEBUG_LOG"
+        exit 1
+    fi
+else
+    echo "[$(date)] Warning: Baserepo master file not found. Skipping." | tee -a "$DEBUG_LOG"
+fi
+
+echo "[$(date)] Update process completed successfully for all services." | tee -a "$DEBUG_LOG"
