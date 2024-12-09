@@ -87,7 +87,7 @@ def parse_ips(input_file, output_dir, prefix):
             }
         ],
         "layout": {
-            "title": f"User Growth ({prefix.capitalize()} Daily Accesses)",
+            "title": f"User Growth: Users accessing the tool daily",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Accesses"}
         }
@@ -121,7 +121,7 @@ def parse_ips(input_file, output_dir, prefix):
             }
         ],
         "layout": {
-            "title": f"Unique User Growth ({prefix.capitalize()} Daily)",
+            "title": f"Unique users accessing the tool daily",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Unique Users"}
         }
