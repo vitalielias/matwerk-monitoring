@@ -5,6 +5,9 @@ OUTPUT_DIR="./data"
 DEBUG_LOG="$OUTPUT_DIR/debug.log"
 MAPPING_MASTER_FILE="$OUTPUT_DIR/mapping_master_accesses.json"
 BASEREPO_MASTER_FILE="$OUTPUT_DIR/baserepo_master_accesses.json"
+VENV_DIR="/var/www/matwerk-monitoring/venv-monitoring"
+
+source "$VENV_DIR/bin/activate"
 
 # Ensure the output directory exists
 mkdir -p "$OUTPUT_DIR"
@@ -32,6 +35,7 @@ fi
 if [ -f "$MAPPING_MASTER_FILE" ]; then
     echo "Running the Python parser for mapping service..."
     python3 ip_parsing.py "$MAPPING_MASTER_FILE" "$OUTPUT_DIR" "mapping"
+    deactivate
     if [ $? -eq 0 ]; then
         echo "[$(date)] Mapping graphs updated successfully." | tee -a "$DEBUG_LOG"
     else
