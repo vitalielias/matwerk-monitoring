@@ -5,7 +5,6 @@ from datetime import datetime
 from collections import defaultdict
 import requests
 
-
 def parse_ips(input_file, output_dir, prefix):
     # Load data
     if not os.path.exists(input_file):
@@ -20,21 +19,18 @@ def parse_ips(input_file, output_dir, prefix):
     unique_accesses_per_day = defaultdict(set)
     location_counts = defaultdict(int)
     city_coordinates = {}
-    new_locations = set()
 
     for entry in data:
         try:
-            # Clean timestamp and parse
-            raw_timestamp = entry['timestamp'].strip("[]")
-            timestamp = datetime.strptime(raw_timestamp, "%d/%b/%Y:%H:%M:%S %z")
+            timestamp = datetime.strptime(entry['timestamp'], "%d/%b/%Y:%H:%M:%S %z")
             day = timestamp.date()  # Aggregate by date
             ip = entry['ip']
 
             # Update counts for daily and unique users
             accesses_per_day[day] += 1
             unique_accesses_per_day[day].add(ip)
-            
-            # Fetch geolocation data and handle map updates
+
+            # Fetch geolocation data and add to map only if public IP
             response = requests.get(f"http://ip-api.com/json/{ip}")
             if response.status_code == 200:
                 result = response.json()
@@ -44,6 +40,7 @@ def parse_ips(input_file, output_dir, prefix):
                     and result.get('lat')
                     and result.get('lon')
                 ):
+                    # Only include public IPs with valid location data
                     city = result['city']
                     location_counts[city] += 1
                     city_coordinates[city] = (result['lat'], result['lon'])
@@ -51,7 +48,6 @@ def parse_ips(input_file, output_dir, prefix):
                     print(f"Private IP detected (excluded from map): {ip}")
         except Exception as e:
             print(f"Error processing entry {entry}: {e}")
-
 
     # Prepare daily and cumulative data
     sorted_days = sorted(accesses_per_day.keys())
@@ -68,13 +64,6 @@ def parse_ips(input_file, output_dir, prefix):
         cumulative_accesses.append(total_accesses)
         cumulative_unique_users.append(len(unique_users_set))
 
-    # Logging summary
-    print(f"Total new users since last run: {len(unique_users_set)}")
-    if new_locations:
-        print(f"New locations added to the map: {', '.join(new_locations)}")
-    else:
-        print("No new locations added to the map.")
-
     # Prepare JSON data for growth rate and cumulative graphs
     user_growth_data = {
         "data": [
@@ -87,7 +76,7 @@ def parse_ips(input_file, output_dir, prefix):
             }
         ],
         "layout": {
-            "title": f"User Growth: Users accessing the tool daily",
+            "title": f"User Growth ({prefix.capitalize()} Daily Accesses)",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Accesses"}
         }
@@ -121,7 +110,7 @@ def parse_ips(input_file, output_dir, prefix):
             }
         ],
         "layout": {
-            "title": f"Unique users accessing the tool daily",
+            "title": f"Unique User Growth ({prefix.capitalize()} Daily)",
             "xaxis": {"title": "Date", "tickformat": "%Y-%m-%d"},
             "yaxis": {"title": "Number of Unique Users"}
         }
@@ -202,3 +191,10 @@ if __name__ == "__main__":
     output_dir = sys.argv[2]
     prefix = sys.argv[3]
     parse_ips(input_file, output_dir, prefix)
+
+# # Write the script to a file for download
+# file_path = "/mnt/data/ip_parsing_updated.py"
+# with open(file_path, "w") as file:
+#     file.write(ip_parsing_script)
+
+# file_path
